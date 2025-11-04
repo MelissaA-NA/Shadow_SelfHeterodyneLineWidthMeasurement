@@ -1,6 +1,7 @@
 # Git Notes for SelfHeterodyne Project
 
 Author: **Melissa Azizul**
+
 This document summarises the essential Git workflow, structure, and debug commands used for the *SelfHeterodyne Linewidth Measurement* repository, including integration with your personal fork and the Nomad upstream repository.
 
 ---
@@ -18,7 +19,9 @@ Check remotes:
 git remote -v
 ```
 
-### Branches
+---
+
+## 2. Branches
 
 * **main** → Base branch (tracks `origin/main`)
 * **testing01** → Your feature/development branch (tracks `origin/testing01`)
@@ -26,137 +29,117 @@ git remote -v
 List branches:
 
 ```bash
-git branch          # local branches
-git branch -a       # all (including remote)
+git branch            # local branches
+git branch -a          # all (including remote)
 ```
 
 Switch branches:
 
 ```bash
-git switch testing01     # move to your work branch
-git switch main          # back to main
+git checkout testing01
 ```
 
-Create a new branch from main:
+Create a new branch:
 
 ```bash
-git switch main
-git pull origin main
-git switch -c new-branch-name
+git checkout -b new-feature
 ```
 
 ---
 
-## 2. Daily Workflow
+## 3. Typical Workflow
+
+### 🧠 Local Work
+
+1. Make edits in VS Code
+2. Check changes:
+
+   ```bash
+   git status
+   ```
+3. Stage and commit:
+
+   ```bash
+   git add <file>
+   git commit -m "description of change"
+   ```
+4. Push to your personal fork:
+
+   ```bash
+   git push
+   ```
+
+---
+
+## 4. Keeping Upstream in Sync
+
+To fetch Nomad’s latest code without pushing to it:
 
 ```bash
-# Check branch and repo
-git branch
-git remote -v
-
-# Stage and commit changes
-git add .
-git commit -m "descriptive message"
-git push
+git fetch upstream
 ```
 
-First push for a new branch:
+To merge or rebase updates:
 
 ```bash
-git push -u origin new-branch-name
+git merge upstream/main
 ```
 
 ---
 
-## 3. Keeping Your Branch Updated
+## 5. Debug & Verification Commands
 
-Sync with upstream changes:
-
-```bash
-git fetch origin
-git merge origin/main     # or: git rebase origin/main
-```
-
-Pull the latest Nomad changes into your local main:
+Check repository root:
 
 ```bash
-git switch main
-git fetch origin
-git pull origin main
+git rev-parse --show-toplevel
 ```
 
----
-
-## 4. Debugging & Info Commands
-
-```bash
-git status                  # check modifications
-git diff                    # view unstaged changes
-git diff --staged           # view staged changes
-git log --oneline -10 --graph --decorate  # short log
-git fetch --all             # fetch all remotes
-git rev-parse --show-toplevel  # confirm repo root
-```
-
----
-
-## 5. Handling Common Issues
-
-### File not showing changes
-
-Make sure file is saved (Ctrl+S) and not ignored by `.gitignore`.
-
-Force-track notebook:
-
-```bash
-git rm --cached SHD_script.ipynb
-git add -f SHD_script.ipynb
-git commit -m "Force track notebook"
-git push
-```
-
-To ensure `.ipynb` always tracked, add this to `.gitignore`:
-
-```
-!SHD_script.ipynb
-```
-
-### Undo / Reset mistakes
-
-```bash
-git restore <file>              # discard local edits
-git restore --staged <file>     # unstage
-git commit --amend              # change last commit message
-git reset --soft HEAD~1         # undo last commit, keep changes staged
-```
-
-### Line Ending Warning
-
-If you see:
-
-```
-LF will be replaced by CRLF
-```
-
-It’s safe to ignore (Windows uses CRLF). To standardize:
-
-```bash
-git config core.autocrlf true
-```
-
----
-
-## 6. Quick Reference Commands
+Check modified files:
 
 ```bash
 git status
-git add .
-git commit -m "message"
-git push
-
-git fetch origin
-git merge origin/main
 ```
+
+Force add ignored files (e.g., notebooks):
+
+```bash
+git add -f SHD_script.ipynb
+```
+
+View recent commits:
+
+```bash
+git log --oneline -5 --decorate
+```
+
+---
+
+## 6. Adding an External Folder (like `Docs/`)
+
+When creating new directories (e.g., `Docs/` for notes):
+
+1. Navigate to the correct folder level:
+
+   ```bash
+   cd ..   # move up one level if you’re inside a subfolder like SelfHeterodyne
+   ```
+
+2. Verify the folder exists:
+
+   ```bash
+   ls Docs
+   ```
+
+3. Stage, commit, and push:
+
+   ```bash
+   git add Docs/Git_Workflow_Notes.md
+   git commit -m "Add Git workflow notes for SelfHeterodyne project"
+   git push
+   ```
+
+💡 *Tip:* Always ensure you’re in the **repo root directory** before adding paths that start with folder names.
 
 ---
 
@@ -168,14 +151,15 @@ git merge origin/main
 
 ---
 
-### ✅ Summary:
+### ✅ Summary
 
 * Work on **testing01** (personal dev branch).
 * Push to **origin/testing01**.
 * Keep **main** updated from **origin/main**.
-* Fetch from **upstream** to get Nomad’s latest changes.
-* Always `git status` before commit.
+* Fetch from **upstream** for Nomad’s latest changes.
+* Always run `git status` before committing.
 
 ---
 
 **End of Notes**
+
